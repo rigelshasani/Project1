@@ -4,6 +4,8 @@
 // Winter 2021
 // Chris Szalwinski
 
+//Student Name: Rigels Hasani
+
 #include <iostream>
 #include <fstream>
 #include <string>
