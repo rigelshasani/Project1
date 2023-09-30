@@ -15,7 +15,6 @@ CustomerOrder::CustomerOrder(){
     m_product = "";
     m_cntItem = 0;
     m_lstItem = nullptr;
-    //item1//how do i initialize a object/class?
     m_widthField = 0;
     item1.m_itemName = "";
 }
