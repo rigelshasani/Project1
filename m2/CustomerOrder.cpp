@@ -1,10 +1,14 @@
+//Collision
+//Elevate
+//Ryan Fang
+//Micro and micro economics Udemy
+//International Economics
 #include <iostream>
 #include <vector>
 #include <iomanip>
 #include "CustomerOrder.h"
 #include "Station.h"
 #include "Utilities.h"
-
 using namespace std;
 using namespace sdds;
 
@@ -19,22 +23,24 @@ CustomerOrder::CustomerOrder(){
     item1.m_itemName = "";
 }
 CustomerOrder::CustomerOrder(const std::string& reference){
+    cout << reference << endl;
     Utilities util1;
     size_t next = 0;
     bool r = true;
     m_name = util1.extractToken(reference, next, r);
     m_product = util1.extractToken(reference, next, r);
-
+    
+    
     vector<string> temp;
     while(r == true){
         temp.push_back(util1.extractToken(reference, next, r));
     }
     //testing the items
-    cout << endl;
-    for(size_t i=0;i<temp.size();i++){
-        cout <<"|TEST-----------" << temp[i] << "|" << endl;
-    }
-    cout << endl;
+    // cout << endl;
+    // for(size_t i=0;i<temp.size();i++){
+    //     cout <<"|TEST-----------" << temp[i] << "|" << endl;
+    // }
+    // cout << endl;
     //end test
     m_widthField = std::max(m_widthField, util1.getFieldWidth());
     //get the item count
@@ -48,6 +54,7 @@ CustomerOrder::CustomerOrder(const std::string& reference){
         //Item object, which takes in a parameter...
         //temp[i], which is a string
         Item* item = new Item(temp[i]);
+        //cout << item->m_serialNumber << endl;
         m_lstItem[i] = item;
     }
     //alternatively
@@ -63,11 +70,11 @@ CustomerOrder::CustomerOrder(const CustomerOrder& order){
 
 //move semantics
 CustomerOrder::CustomerOrder(CustomerOrder&& order) noexcept{
-    cout << order.m_name;
     m_name    = std::move(order.m_name);
     cout << order.m_name;
     m_product = std::move(order.m_product);
     m_cntItem = order.m_cntItem;
+    //shouldnt this loop through the list items and assign them individually
     m_lstItem = order.m_lstItem;
     
     order.m_lstItem = nullptr;
@@ -75,13 +82,21 @@ CustomerOrder::CustomerOrder(CustomerOrder&& order) noexcept{
 }
 void CustomerOrder::operator=(CustomerOrder&& order) noexcept{
     if(this != &order){
-        cout << order.m_cntItem << "<- reference|this-> " << this->m_cntItem << endl;
+        //cout << order.m_cntItem << "<- reference|this-> " << this->m_cntItem << endl;
+        //cout << this->m_name << endl;
+        //cout << order.m_lstItem[0] << "<- reference|this-> " << this->m_lstItem[0] << endl;
+
         m_name = std::move(order.m_name);
+        //cout << "Finished move name" << endl;
         m_product = std::move(order.m_product);
+        //cout << "Finished move product" << endl;
         m_cntItem = order.m_cntItem;
-        for(size_t i=0;i<m_cntItem;i++){
+        //cout << "Finished move itm count" << endl;
+        cout << "Item count is: " << this->m_cntItem << endl;
+        for(size_t i=0;i<this->m_cntItem;i++){
             m_lstItem[i] = std::move(order.m_lstItem[i]);
         }
+        cout << "Finished move operation" << endl;
     }
 }
 CustomerOrder::~CustomerOrder(){
@@ -120,14 +135,16 @@ bool CustomerOrder::isItemFilled(const std::string& itemName) const{
     return true;
 }
 void CustomerOrder::fillItem(Station& station, std::ostream& os){
+    cout << "Inside the item filler" << endl;
     for(size_t i=0;i<m_cntItem;i++){
         if(station.getItemName() == m_lstItem[i]->m_itemName && station.getQuantity() > 0){
             //fills the item
-            m_lstItem[i]->m_isFilled = true;
             //descreases the quantity available in the station by 1
             station.updateQuantity();
             cout << "Filled NAME, PRODUCT " << 
             m_lstItem[i]->m_itemName << endl; 
+            m_lstItem[i]->m_isFilled = true;
+            //m_lstItem[i]->m_serialNumber = station.getNextSerialNumber();
         }
         else{
             cout << "Unable to fill NAME, PRODUCT " << m_lstItem[i]->m_itemName << endl;
@@ -141,10 +158,11 @@ void CustomerOrder::fillItem(Station& station, std::ostream& os){
 }//end fillitem function
 void CustomerOrder::display(std::ostream& os) const {
     os << m_name << " - " << m_product << std::endl;
-
-    for (size_t i = 0; i < m_cntItem; i++) {
-        os << "[" << std::setw(6) << std::setfill('0') 
-           << m_lstItem[i]->m_serialNumber << "] - "
-           << (m_lstItem[i]->m_isFilled ? "FILLED" : "TO BE FILLED") << std::endl;
-    }
+    cout << m_cntItem << endl;
+    cout << m_lstItem[1]->m_serialNumber << endl;
+    // for (size_t i = 0; i < m_cntItem; i++) {
+    //     os << "[" << std::setw(6) << std::setfill('0') 
+    //        << m_lstItem[i]->m_serialNumber << "] - "
+    //        << (m_lstItem[i]->m_isFilled ? "FILLED" : "TO BE FILLED") << std::endl;
+    // }
 }

@@ -27,29 +27,37 @@ size_t Utilities::getFieldWidth() const{
     return m_widthField;
 }
 std::string Utilities::extractToken(const std::string& str, size_t& next_pos, bool& more) {
+    // cout << "String is: " << str << endl;
+    // cout << "Next pos is: " << next_pos << endl;
     if (next_pos >= str.length()) {
         more = false;
-        return ""; // or throw std::runtime_error("Position out of bounds");
+        throw std::runtime_error("Position out of bounds");
     }
 
     size_t delimiterPos = str.find(m_delimiter, next_pos);
-
+    //cout << "-------TEST 1----------" << endl;
     if (delimiterPos == std::string::npos) {
         delimiterPos = str.length();
         more = false;
     } else {
         more = true;
     }
-
+    //cout << "-------TEST 2----------" << endl;
     if (delimiterPos == next_pos) {
         // Skip tokens consisting solely of the delimiter
         next_pos++;
         return extractToken(str, next_pos, more); // Recursively move to the next token
     }
-
+    //cout << "-------TEST 3----------" << endl;
     std::string token = str.substr(next_pos, delimiterPos - next_pos);
+    if(m_delimiter == token[0]){
+        throw std::runtime_error("Delimiter is the only left character");
+    }
     next_pos = delimiterPos + 1;
     m_widthField = std::max(m_widthField, token.length());
+    //cout << "-------TEST 4----------" << endl;
+    //cout << "Token is: " << token << endl;
+    //cout << "Next pos is: " << next_pos << endl;
 
     return trim(token);
 }
